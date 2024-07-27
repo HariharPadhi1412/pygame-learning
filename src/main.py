@@ -90,15 +90,10 @@ star_surface = pygame.image.load(join('../images', 'star.png')).convert_alpha()
 
 for i in range(20):
     Star(all_sprites, star_surface)
-
 player = Player(all_sprites)
 
 meteor_surf = pygame.image.load(join('../images', 'meteor.png')).convert_alpha()
-meteor_rect = meteor_surf.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
-
 laser_surf = pygame.image.load(join('../images', 'laser.png')).convert_alpha()
-
-star_position = [(randint(0, WINDOW_WIDTH), randint(0, WINDOW_HEIGHT)) for i in range(20)]
 
 meteor_event = pygame.event.custom_type()
 pygame.time.set_timer(meteor_event, 500)
