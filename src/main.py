@@ -31,12 +31,17 @@ laser_rect = laser_surf.get_frect(bottomleft=(20, WINDOW_HEIGHT - 20))
 
 star_position = [(randint(0, WINDOW_WIDTH), randint(0, WINDOW_HEIGHT)) for i in range(20)]
 
+meteor_event = pygame.event.custom_type()
+pygame.time.set_timer(meteor_event, 500)
+
 while running:
     dt = clock.tick() / 1000
     # event loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == meteor_event:
+            x, y = randint(0, WINDOW_WIDTH), randint(-200, -100)
 
     # draw the window
     display_surface.fill('darkgray')
