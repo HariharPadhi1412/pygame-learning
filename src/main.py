@@ -125,6 +125,7 @@ def display_score():
     text_surface = font.render(str(current_time), True, 'red')
     text_rect = text_surface.get_frect(midbottom=(WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50))
     display_surface.blit(text_surface, text_rect)
+    pygame.draw.rect(display_surface, (250, 250, 250), text_rect.inflate(20, 40).move(0, -5), 5, 10)
 
 
 for i in range(20):
