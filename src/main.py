@@ -25,10 +25,21 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, group):
         super().__init__(group)
         self.image = pygame.image.load(join('../images', 'player.png')).convert_alpha()
-        self.surface = self.image.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+        self.rect = self.image.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+        self.direction = pygame.math.Vector2()
+        self.speed = 10
+
+    def update(self, delta_time):
+        self.player_movement(delta_time)
+
+    def player_movement(self, delta_time):
+        keys = pygame.key.get_pressed()
+        self.direction.x = int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
+        self.direction.y = int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])
+        self.direction = self.direction.normalize() if self.direction else self.direction
+        self.rect.center += self.direction * self.speed * delta_time
 
 
-# importing an image
 # player_surface = pygame.image.load(join('../images', 'player.png')).convert_alpha()
 # player_rect = player_surface.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
 all_sprites = pygame.sprite.Group()
@@ -49,7 +60,7 @@ meteor_event = pygame.event.custom_type()
 pygame.time.set_timer(meteor_event, 500)
 
 while running:
-    dt = clock.tick() / 1000
+    delta_time = clock.tick() / 1000
     # event loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -58,6 +69,7 @@ while running:
             x, y = randint(0, WINDOW_WIDTH), randint(-200, -100)
 
     # draw the window
+    all_sprites.update()
     display_surface.fill('darkgray')
     for pos in star_position:
         display_surface.blit(star_surface, pos)
@@ -65,7 +77,8 @@ while running:
     display_surface.blit(meteor_surf, meteor_rect)
 
     # player_rect.center += player_direction * player_speed * dt
-    display_surface.blit(player_surface, player_rect)
+    display_surface.blit(player.image, player.rect)
+    all_sprites.draw(display_surface)
 
     pygame.display.update()
 
