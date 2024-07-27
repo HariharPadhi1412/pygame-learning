@@ -14,10 +14,6 @@ pygame.display.set_caption("space shooter")
 running = True
 clock = pygame.time.Clock()
 
-surf = pygame.Surface((100, 200))
-player_direction = pygame.math.Vector2(2, -1)
-player_speed = 100
-
 
 # Classes
 
@@ -27,10 +23,11 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(join('../images', 'player.png')).convert_alpha()
         self.rect = self.image.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
         self.direction = pygame.math.Vector2()
-        self.speed = 10
+        self.speed = 300
 
     def update(self, delta_time):
         self.player_movement(delta_time)
+        self.fire_laser()
 
     def player_movement(self, delta_time):
         keys = pygame.key.get_pressed()
@@ -39,14 +36,28 @@ class Player(pygame.sprite.Sprite):
         self.direction = self.direction.normalize() if self.direction else self.direction
         self.rect.center += self.direction * self.speed * delta_time
 
+    def fire_laser(self):
+        recent_keys = pygame.key.get_pressed()
+        if recent_keys[pygame.K_SPACE]:
+            pass
 
-# player_surface = pygame.image.load(join('../images', 'player.png')).convert_alpha()
-# player_rect = player_surface.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+
+class Star(pygame.sprite.Sprite):
+    def __init__(self, group, surface):
+        super().__init__(group)
+        self.image = surface
+        self.rect = self.image.get_frect(center=(randint(0, WINDOW_WIDTH), randint(0, WINDOW_HEIGHT)))
+
+
 all_sprites = pygame.sprite.Group()
 meteor = pygame.sprite.Group()
 
-player = Player(all_sprites)
 star_surface = pygame.image.load(join('../images', 'star.png')).convert_alpha()
+
+for i in range(20):
+    Star(all_sprites, star_surface)
+
+player = Player(all_sprites)
 
 meteor_surf = pygame.image.load(join('../images', 'meteor.png')).convert_alpha()
 meteor_rect = meteor_surf.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
@@ -69,14 +80,9 @@ while running:
             x, y = randint(0, WINDOW_WIDTH), randint(-200, -100)
 
     # draw the window
-    all_sprites.update()
+    all_sprites.update(delta_time)
     display_surface.fill('darkgray')
-    for pos in star_position:
-        display_surface.blit(star_surface, pos)
-    display_surface.blit(laser_surf, laser_rect)
-    display_surface.blit(meteor_surf, meteor_rect)
 
-    # player_rect.center += player_direction * player_speed * dt
     display_surface.blit(player.image, player.rect)
     all_sprites.draw(display_surface)
 
