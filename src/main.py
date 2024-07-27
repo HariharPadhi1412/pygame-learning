@@ -127,11 +127,8 @@ while running:
 
     # draw the window
     all_sprites.update(delta_time)
-    meteor_grp.update(delta_time)
 
     collision_sprite = pygame.sprite.spritecollide(player, meteor_grp, True)
-    # if collision_sprite:
-    #     print(collision_sprite[0])
 
     for laser in laser_grp:
         collided_meteor = pygame.sprite.spritecollide(laser, meteor_grp, True)
@@ -142,8 +139,6 @@ while running:
     display_surface.blit(player.image, player.rect)
 
     all_sprites.draw(display_surface)
-    meteor_grp.draw(display_surface)
-
     pygame.display.update()
 
 pygame.init()
