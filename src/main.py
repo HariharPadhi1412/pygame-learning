@@ -1,5 +1,5 @@
 from os.path import join
-from random import randint
+from random import randint, uniform
 
 import pygame
 
@@ -13,6 +13,10 @@ display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("space shooter")
 running = True
 clock = pygame.time.Clock()
+
+star_surface = pygame.image.load(join('../images', 'star.png')).convert_alpha()
+meteor_surf = pygame.image.load(join('../images', 'meteor.png')).convert_alpha()
+laser_surf = pygame.image.load(join('../images', 'laser.png')).convert_alpha()
 
 
 # Classes
@@ -83,17 +87,30 @@ class Laser(pygame.sprite.Sprite):
             self.kill()
 
 
-all_sprites = pygame.sprite.Group()
-meteor = pygame.sprite.Group()
+class Meteor(pygame.sprite.Sprite):
+    def __init__(self, surface, position, group):
+        super().__init__(group)
+        self.image = surface
+        self.rect = self.image.get_frect(center=position)
+        self.direction = pygame.math.Vector2(uniform(-0.5, 0.5), 1)
+        self.speed = randint(400, 500)
 
-star_surface = pygame.image.load(join('../images', 'star.png')).convert_alpha()
+    def update(self, delta_time):
+        self.rect.center += self.direction * self.speed * delta_time
+        self.kill_meteor()
+
+    def kill_meteor(self):
+        if self.rect.bottom > WINDOW_HEIGHT:
+            self.kill()
+
+
+all_sprites = pygame.sprite.Group()
+meteor_grp = pygame.sprite.Group()
+laser_grp = pygame.sprite.Group()
 
 for i in range(20):
     Star(all_sprites, star_surface)
 player = Player(all_sprites)
-
-meteor_surf = pygame.image.load(join('../images', 'meteor.png')).convert_alpha()
-laser_surf = pygame.image.load(join('../images', 'laser.png')).convert_alpha()
 
 meteor_event = pygame.event.custom_type()
 pygame.time.set_timer(meteor_event, 500)
@@ -106,13 +123,17 @@ while running:
             running = False
         if event.type == meteor_event:
             x, y = randint(0, WINDOW_WIDTH), randint(-200, -100)
+            Meteor(meteor_surf, (x, y), (meteor_grp, all_sprites))
 
     # draw the window
     all_sprites.update(delta_time)
+    meteor_grp.update(delta_time)
+    print(pygame.sprite.spritecollide(player, meteor_grp, False))
     display_surface.fill('darkgray')
 
     display_surface.blit(player.image, player.rect)
     all_sprites.draw(display_surface)
+    meteor_grp.draw(display_surface)
 
     pygame.display.update()
 
