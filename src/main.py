@@ -17,6 +17,8 @@ clock = pygame.time.Clock()
 star_surface = pygame.image.load(join('../images', 'star.png')).convert_alpha()
 meteor_surf = pygame.image.load(join('../images', 'meteor.png')).convert_alpha()
 laser_surf = pygame.image.load(join('../images', 'laser.png')).convert_alpha()
+font = pygame.font.Font(join('../images', 'Oxanium-Bold.ttf'), 20)
+font_surface = font.render('text', True, 'red')
 
 
 # Classes
@@ -108,6 +110,23 @@ all_sprites = pygame.sprite.Group()
 meteor_grp = pygame.sprite.Group()
 laser_grp = pygame.sprite.Group()
 
+
+def collisions():
+    collision_sprite = pygame.sprite.spritecollide(player, meteor_grp, True)
+
+    for laser in laser_grp:
+        collided_meteor = pygame.sprite.spritecollide(laser, meteor_grp, True)
+        if collided_meteor and len(collided_meteor) >= 1:
+            laser.kill()
+
+
+def display_score():
+    current_time = pygame.time.get_ticks()
+    text_surface = font.render(str(current_time), True, 'red')
+    text_rect = text_surface.get_frect(midbottom=(WINDOW_WIDTH / 2, WINDOW_HEIGHT - 50))
+    display_surface.blit(text_surface, text_rect)
+
+
 for i in range(20):
     Star(all_sprites, star_surface)
 player = Player(all_sprites)
@@ -127,17 +146,10 @@ while running:
 
     # draw the window
     all_sprites.update(delta_time)
-
-    collision_sprite = pygame.sprite.spritecollide(player, meteor_grp, True)
-
-    for laser in laser_grp:
-        collided_meteor = pygame.sprite.spritecollide(laser, meteor_grp, True)
-        if collided_meteor and len(collided_meteor) >= 1:
-            laser.kill()
-
+    collisions()
     display_surface.fill('darkgray')
+    display_score()
     display_surface.blit(player.image, player.rect)
-
     all_sprites.draw(display_surface)
     pygame.display.update()
 
