@@ -18,9 +18,23 @@ surf = pygame.Surface((100, 200))
 player_direction = pygame.math.Vector2(2, -1)
 player_speed = 100
 
+
+# Classes
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = pygame.image.load(join('../images', 'player.png')).convert_alpha()
+        self.surface = self.image.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+
+
 # importing an image
-player_surface = pygame.image.load(join('../images', 'player.png')).convert_alpha()
-player_rect = player_surface.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+# player_surface = pygame.image.load(join('../images', 'player.png')).convert_alpha()
+# player_rect = player_surface.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+all_sprites = pygame.sprite.Group()
+meteor = pygame.sprite.Group()
+
+player = Player(all_sprites)
 star_surface = pygame.image.load(join('../images', 'star.png')).convert_alpha()
 
 meteor_surf = pygame.image.load(join('../images', 'meteor.png')).convert_alpha()
@@ -50,7 +64,7 @@ while running:
     display_surface.blit(laser_surf, laser_rect)
     display_surface.blit(meteor_surf, meteor_rect)
 
-    player_rect.center += player_direction * player_speed * dt
+    # player_rect.center += player_direction * player_speed * dt
     display_surface.blit(player_surface, player_rect)
 
     pygame.display.update()
