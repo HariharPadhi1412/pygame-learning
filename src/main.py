@@ -51,7 +51,7 @@ class Player(pygame.sprite.Sprite):
 
     def check_fire_event(self, recent_keys):
         if recent_keys[pygame.K_SPACE] and self.can_shoot:
-            Laser(laser_surf, self.rect.midtop, all_sprites)
+            Laser(laser_surf, self.rect.midtop, (all_sprites, laser_grp))
             self.can_shoot = False
             self.laser_shoot_time = pygame.time.get_ticks()
 
@@ -128,10 +128,19 @@ while running:
     # draw the window
     all_sprites.update(delta_time)
     meteor_grp.update(delta_time)
-    print(pygame.sprite.spritecollide(player, meteor_grp, False))
-    display_surface.fill('darkgray')
 
+    collision_sprite = pygame.sprite.spritecollide(player, meteor_grp, True)
+    # if collision_sprite:
+    #     print(collision_sprite[0])
+
+    for laser in laser_grp:
+        collided_meteor = pygame.sprite.spritecollide(laser, meteor_grp, True)
+        if collided_meteor and len(collided_meteor) >= 1:
+            laser.kill()
+
+    display_surface.fill('darkgray')
     display_surface.blit(player.image, player.rect)
+
     all_sprites.draw(display_surface)
     meteor_grp.draw(display_surface)
 
